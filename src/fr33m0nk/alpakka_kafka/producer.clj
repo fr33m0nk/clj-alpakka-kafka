@@ -1,4 +1,5 @@
 (ns fr33m0nk.alpakka-kafka.producer
+  "Akka Stream connector for publishing messages to Kafka topics"
   (:require [clojure.string :as str])
   (:import (akka.actor ActorSystem)
            (akka.kafka CommitterSettings ProducerMessage ProducerMessage$Envelope ProducerSettings ProducerMessage$Result ProducerMessage$Results)
@@ -47,26 +48,22 @@
   (Producer/flexiFlow producer-settings))
 
 (defn flow-with-context
-  "Akka Stream connector for publishing messages to Kafka topics.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#flowWithContext[K,V,C](settings:akka.kafka.ProducerSettings[K,V]):akka.stream.javadsl.FlowWithContext[akka.kafka.ProducerMessage.Envelope[K,V,akka.NotUsed],C,akka.kafka.ProducerMessage.Results[K,V,C],C,akka.NotUsed]"
+  "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#flowWithContext[K,V,C](settings:akka.kafka.ProducerSettings[K,V]):akka.stream.javadsl.FlowWithContext[akka.kafka.ProducerMessage.Envelope[K,V,akka.NotUsed],C,akka.kafka.ProducerMessage.Results[K,V,C],C,akka.NotUsed]"
   [^ProducerSettings producer-settings]
   (Producer/flowWithContext producer-settings))
 
 (defn plain-sink
-  "Akka Stream connector for publishing messages to Kafka topics.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#plainSink[K,V](settings:akka.kafka.ProducerSettings[K,V]):akka.stream.javadsl.Sink[org.apache.kafka.clients.producer.ProducerRecord[K,V],java.util.concurrent.CompletionStage[akka.Done]]"
+  "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#plainSink[K,V](settings:akka.kafka.ProducerSettings[K,V]):akka.stream.javadsl.Sink[org.apache.kafka.clients.producer.ProducerRecord[K,V],java.util.concurrent.CompletionStage[akka.Done]]"
   [^ProducerSettings producer-settings]
   (Producer/plainSink producer-settings))
 
 (defn committable-sink
-  "Akka Stream connector for publishing messages to Kafka topics.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#committableSink[K,V,IN%3C:akka.kafka.ProducerMessage.Envelope[K,V,akka.kafka.ConsumerMessage.Committable]](producerSettings:akka.kafka.ProducerSettings[K,V],committerSettings:akka.kafka.CommitterSettings):akka.stream.javadsl.Sink[IN,java.util.concurrent.CompletionStage[akka.Done]]"
+  "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#committableSink[K,V,IN%3C:akka.kafka.ProducerMessage.Envelope[K,V,akka.kafka.ConsumerMessage.Committable]](producerSettings:akka.kafka.ProducerSettings[K,V],committerSettings:akka.kafka.CommitterSettings):akka.stream.javadsl.Sink[IN,java.util.concurrent.CompletionStage[akka.Done]]"
   [^ProducerSettings producer-settings ^CommitterSettings committer-settings]
   (Producer/committableSink producer-settings committer-settings))
 
 (defn committable-sink-with-offset-context
-  "Akka Stream connector for publishing messages to Kafka topics.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#committableSinkWithOffsetContext[K,V,IN%3C:akka.kafka.ProducerMessage.Envelope[K,V,_],C%3C:akka.kafka.ConsumerMessage.Committable](producerSettings:akka.kafka.ProducerSettings[K,V],committerSettings:akka.kafka.CommitterSettings):akka.stream.javadsl.Sink[akka.japi.Pair[IN,C],java.util.concurrent.CompletionStage[akka.Done]]"
+  "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Producer$.html#committableSinkWithOffsetContext[K,V,IN%3C:akka.kafka.ProducerMessage.Envelope[K,V,_],C%3C:akka.kafka.ConsumerMessage.Committable](producerSettings:akka.kafka.ProducerSettings[K,V],committerSettings:akka.kafka.CommitterSettings):akka.stream.javadsl.Sink[akka.japi.Pair[IN,C],java.util.concurrent.CompletionStage[akka.Done]]"
   [^ProducerSettings producer-settings ^CommitterSettings committer-settings]
   (Producer/committableSinkWithOffsetContext producer-settings committer-settings))
 
