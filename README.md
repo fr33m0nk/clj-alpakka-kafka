@@ -1,4 +1,4 @@
-# fr33m0nk/clj-actor
+# fr33m0nk/clj-alpakka-kafka
 
 FIXME: my new library.
 
