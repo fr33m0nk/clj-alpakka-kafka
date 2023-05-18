@@ -1,7 +1,9 @@
 (ns fr33m0nk.utils
   (:import
+    (akka.japi Pair)
     (clojure.lang IFn)
-    (java.io Serializable)))
+    (java.io Serializable)
+    (scala Product)))
 
 (deftype Function0
   [f]
@@ -57,16 +59,24 @@
   [f]
   (->Function0 f))
 
-
 (defn ->fn1
   "Wraps a Clojure function with arity 1 in a Scala `Function1`."
   ^Function1
   [f]
   (->Function1 f))
 
-
 (defn ->fn2
   "Wraps a Clojure function with arity 2 in a Scala `Function2`."
   ^Function2
   [f]
   (->Function2 f))
+
+(defn pair->vector
+  [^Pair pair]
+  (let [scala-tuple (.toScala pair)]
+    (as-> scala-tuple $
+          (.productArity $)
+          (take $ (iterate inc 0))
+          (into []
+                (map #(.productElement ^Product scala-tuple %))
+                $))))

@@ -1,10 +1,10 @@
 (ns fr33m0nk.clj-actor-test
-  (:refer-clojure :exclude [map])
-  (:require [clojure.test :refer :all]
-    ;[fr33m0nk.clj-actor :refer :all]
+  (:refer-clojure :exclude [map key])
+  (:require [clojure.test :refer [deftest testing is]]
+            [fr33m0nk.akka.actor :as actor]
             [fr33m0nk.utils :as utils]
             [fr33m0nk.akka.stream :as s]
-            [fr33m0nk.alpakka-kafka.consumer :refer []]
+            [fr33m0nk.alpakka-kafka.consumer :refer [drain-and-shutdown]]
             [fr33m0nk.alpakka-kafka.committer :refer [sink]]
             [fr33m0nk.alpakka-kafka.producer :refer [single-producer-message-envelope ->producer-record producer-message-passthrough]])
   (:import (akka.actor ActorSystem)
@@ -13,6 +13,7 @@
            (akka.kafka.testkit ConsumerResultFactory ProducerResultFactory)
            (akka.kafka.testkit.javadsl ConsumerControlFactory)
            (akka.stream.javadsl Keep Source)
+           (java.util.concurrent CompletableFuture)
            (org.apache.kafka.clients.consumer ConsumerRecord)))
 
 (deftest a-test
@@ -46,7 +47,7 @@
 (defn mocked-kafka-consumer-source
   [consumer-messages]
   (-> (Source/from consumer-messages)
-      (s/via-mat (ConsumerControlFactory/controlFlow) (fn [a b] b))))
+      (s/via-mat (ConsumerControlFactory/controlFlow) (fn [_ b] b))))
 
 (defn mocked-producer-flow
   []
@@ -88,5 +89,11 @@
                                                   (.withMaxBatch batch-size))))
 
   (def run-test (test-stream actor-system committer-settings "test-target"))
+
+  @(drain-and-shutdown (first (utils/pair->vector run-test))
+                      (CompletableFuture/supplyAsync (utils/->fn0 (fn [] :done)))
+                      (actor/get-dispatcher actor-system))
+
+  @(actor/terminate actor-system)
 
   )
