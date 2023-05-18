@@ -73,11 +73,12 @@
   (.send send-producer producer-record))
 
 (defn ->producer-record
+  "creates a producer record which can be used later for publishing"
   ([topic value]
    (ProducerRecord. topic value))
   ([topic value key]
    (ProducerRecord. topic key value))
   ([topic value key partition-number]
    (ProducerRecord. topic (int partition-number) key value))
-  ([topic value key partition-number timestamp ^Iterable headers]
-   (ProducerRecord. topic (int partition-number) timestamp key value headers)))
+  ([topic value key partition-number timestamp-as-long ^Iterable headers]
+   (ProducerRecord. topic (int partition-number) timestamp-as-long key value headers)))
