@@ -16,10 +16,6 @@
            (java.util.concurrent CompletableFuture)
            (org.apache.kafka.clients.consumer ConsumerRecord)))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
-
 (defn generate-consumer-messages
   ([group-id topic partition]
    (let [start-offset (atom 0)]
@@ -76,11 +72,6 @@
       (s/run actor-system)))
 
 
-(deftype ABC [f]
-  java.util.function.Function
-  akka.japi.function.Function
-  (apply [_ arg]
-    (f arg)))
 
 (comment
 
