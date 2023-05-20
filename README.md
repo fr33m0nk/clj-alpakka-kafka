@@ -36,7 +36,7 @@ net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.1"}
 [net.clojars.fr33m0nk/clj-alpakka-kafka "0.1.1"]
 ```
 
-- Maven
+- **Maven**
 ```xml
 <dependency>
   <groupId>net.clojars.fr33m0nk</groupId>
@@ -45,11 +45,22 @@ net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.1"}
 </dependency>
 ```
 
-- Gradle
+- **Gradle**
 ```groovy
 implementation("net.clojars.fr33m0nk:clj-alpakka-kafka:0.1.1")
 ```
 
+### Additional dependencies:
+- Kafka Client ([any compatible version is fine](https://doc.akka.io/docs/alpakka-kafka/current/home.html))
+```clojure
+org.apache.kafka/kafka-clients {:mvn/version "3.3.2"} 
+```
+- SLF4J implentation based logger 
+  - Needed for Akka logging
+```clojure
+com.taoensso/timbre {:mvn/version "6.1.0"}
+com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
+```
     
 ## License
 
