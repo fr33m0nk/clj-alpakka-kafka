@@ -5,7 +5,7 @@ For further documentation, do refer [Alpakka Kafka official docs](https://doc.ak
 
 ## Usage
 
-Functions are divided in following namespaces:
+### Functions are divided in following namespaces:
 
 - **`fr33m0nk.akka.actor`**
   - Functions for working with `Akka Actor System`
@@ -23,6 +23,32 @@ Functions are divided in following namespaces:
   - Functions for working with [Alpakka Kafka Committer Sink](https://doc.akka.io/docs/alpakka-kafka/current/consumer.html#committer-sink)
 - **`fr33m0nk.alpakka-kafka.transactional`**
   - Functions for building Transaction pipelines using [Transactional Source and Sink](https://doc.akka.io/docs/alpakka-kafka/current/transactions.html)
+
+### Add the following to your project dependencies:
+
+- **CLI/deps.edn dependency information**
+```clojure
+net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.1"}
+```
+
+- **Leningen/Boot**
+```clojure
+[net.clojars.fr33m0nk/clj-alpakka-kafka "0.1.1"]
+```
+
+- Maven
+```xml
+<dependency>
+  <groupId>net.clojars.fr33m0nk</groupId>
+  <artifactId>clj-alpakka-kafka</artifactId>
+  <version>0.1.1</version>
+</dependency>
+```
+
+- Gradle
+```groovy
+implementation("net.clojars.fr33m0nk:clj-alpakka-kafka:0.1.1")
+```
 
     
 ## License
