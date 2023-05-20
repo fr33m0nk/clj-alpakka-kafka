@@ -336,7 +336,7 @@
                                                                  :key-serializer (StringSerializer.)
                                                                  :value-serializer (StringSerializer.)}))
 
-(def restart-settings (restart/restart-settings 1000 5000 0.2))
+(def restart-settings (restart/restart-settings 1000 5000 0.2 {}))
 ```
 5. Let's run the stream and see it in action
 ```clojure

@@ -7,10 +7,14 @@
     (java.time Duration)))
 
 (defn restart-settings
-  [min-backoff-millis max-backoff-millis random-factor]
-  (RestartSettings/create (Duration/ofMillis min-backoff-millis)
-                          (Duration/ofMillis max-backoff-millis)
-                          (double random-factor)))
+  "Creates restart settings for restart source"
+  [min-backoff-millis max-backoff-millis random-factor
+   {:keys [max-restart-count max-restarts-within-millis restart-when-exception-handler]}]
+  (cond-> (RestartSettings/create (Duration/ofMillis min-backoff-millis)
+                                  (Duration/ofMillis max-backoff-millis)
+                                  (double random-factor))
+    (and max-restart-count max-restarts-within-millis) (.withMaxRestarts (int max-restart-count) (Duration/ofMillis max-restarts-within-millis))
+    restart-when-exception-handler (.withRestartOn (utils/->fn1 restart-when-exception-handler))))
 
 (defn ->restart-source-with-backoff
   [^RestartSettings restart-settings source-factory-fn]

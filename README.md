@@ -30,12 +30,12 @@ For further documentation, do refer [Alpakka Kafka official docs](https://doc.ak
 
 - **CLI/deps.edn dependency information**
 ```clojure
-net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.5"}
+net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.6"}
 ```
 
 - **Leningen/Boot**
 ```clojure
-[net.clojars.fr33m0nk/clj-alpakka-kafka "0.1.5"]
+[net.clojars.fr33m0nk/clj-alpakka-kafka "0.1.6"]
 ```
 
 - **Maven**
@@ -43,13 +43,13 @@ net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.5"}
 <dependency>
   <groupId>net.clojars.fr33m0nk</groupId>
   <artifactId>clj-alpakka-kafka</artifactId>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
 </dependency>
 ```
 
 - **Gradle**
 ```groovy
-implementation("net.clojars.fr33m0nk:clj-alpakka-kafka:0.1.5")
+implementation("net.clojars.fr33m0nk:clj-alpakka-kafka:0.1.6")
 ```
 
 ### Additional dependencies:
