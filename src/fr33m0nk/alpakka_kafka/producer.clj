@@ -25,8 +25,8 @@
 
 (defprotocol IProducerMessage
   "PassThroughMessage does not publish anything, and continues in the stream as PassThroughResult"
-  (producer-message-passthrough [this] "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ProducerMessage$$Envelope.html#passThrough:PassThrough")
-  (producer-message-with-passthrough [this passthrough] "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ProducerMessage$$Envelope.html#withPassThrough[PassThrough2](value:PassThrough2):akka.kafka.ProducerMessage.Envelope[K,V,PassThrough2]"))
+  (producer-message-passthrough [producer-message-envelope] "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ProducerMessage$$Envelope.html#passThrough:PassThrough")
+  (producer-message-with-passthrough [producer-message-envelope passthrough] "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ProducerMessage$$Envelope.html#withPassThrough[PassThrough2](value:PassThrough2):akka.kafka.ProducerMessage.Envelope[K,V,PassThrough2]"))
 
 (extend-protocol IProducerMessage
   ProducerMessage$Envelope
