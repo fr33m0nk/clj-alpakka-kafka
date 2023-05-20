@@ -204,3 +204,7 @@
 ```clojure
 @(actor/terminate actor-system)
 ```
+
+## Using Alpakka Kafka stream with At-Least-Once Delivery
+
+#### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/atleastonce.html#multiple-effects-per-commit)
