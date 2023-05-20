@@ -63,6 +63,8 @@ org.apache.kafka/kafka-clients {:mvn/version "3.3.2"}
 com.taoensso/timbre {:mvn/version "6.1.0"}
 com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
 ```
+
+### [Examples](./doc/examples.md)
     
 ## License
 
