@@ -3,7 +3,7 @@
   (:require [fr33m0nk.utils :as utils])
   (:import (akka.actor ActorSystem)
            (akka.stream Graph Materializer SubstreamCancelStrategy)
-           (akka.stream.javadsl Flow RunnableGraph Source SubFlow SubSource)
+           (akka.stream.javadsl Flow RunnableGraph Sink Source SubFlow SubSource)
            (java.util List)
            (java.util.concurrent CompletableFuture)))
 
@@ -33,7 +33,7 @@
   (map-async-partitioned [source-or-flow parallelism per-partition-count partitioner-fn bi-mapper-fn]
     "Pass incoming elements to a function that extracts a partitioning key from the element, then to a function that returns a CompletionStage result, bounding the number of incomplete CompletionStages per partitioning key.
     https://doc.akka.io/docs/akka/current/stream/operators/Source-or-Flow/mapAsyncPartitioned.html")
-  (map-materialized-value [source-or-flow bi-mapping-fn])
+  (map-materialized-value [source-or-flow mapping-fn])
   (filter [source-or-flow pred?]
     "Filter the incoming elements using a predicate.
     https://doc.akka.io/docs/akka/current/stream/operators/Source-or-Flow/filter.html")
@@ -65,7 +65,9 @@
   (to [source-or-flow ^Graph sink])
   (to-mat [source-or-flow ^Graph sink combiner-fn])
   (run [source-or-flow ^ActorSystem actor-system])
-  (run-with [source-or-flow ^Graph source ^Graph sink materializer-or-actor-system])
+  (run-with
+    [source ^Graph sink materializer-or-actor-system]
+    [flow ^Graph source ^Graph sink materializer-or-actor-system])
   (drop [source-or-flow n]
     "Drop n elements and then pass any subsequent element downstream.
     https://doc.akka.io/docs/akka/current/stream/operators/Source-or-Flow/drop.html")
@@ -148,8 +150,8 @@
                                                                    (.thenApplyAsync (utils/->fn1 (fn [arg] (then-fn arg))))))))))
   (map-async-partitioned [this parallelism per-partition-count partitioner-fn bi-mapper-fn]
     (.mapAsyncPartitioned this (int parallelism) (int per-partition-count) (utils/->fn1 partitioner-fn) (utils/->fn2 bi-mapper-fn)))
-  (map-materialized-value [this bi-mapping-fn]
-    (.mapMaterializedValue this (utils/->fn2 bi-mapping-fn)))
+  (map-materialized-value [this mapping-fn]
+    (.mapMaterializedValue this (utils/->fn1 mapping-fn)))
   (filter [this pred?]
     (.filter this (utils/->fn1 pred?)))
   (filter-falsy [this pred?]
@@ -340,8 +342,8 @@
                                                                    (.thenApplyAsync (utils/->fn1 (fn [arg] (then-fn arg))))))))))
   (map-async-partitioned [this parallelism per-partition-count partitioner-fn bi-mapper-fn]
     (.mapAsyncPartitioned this (int parallelism) (int per-partition-count) (utils/->fn1 partitioner-fn) (utils/->fn2 bi-mapper-fn)))
-  (map-materialized-value [this bi-mapping-fn]
-    (.mapMaterializedValue this (utils/->fn2 bi-mapping-fn)))
+  (map-materialized-value [this mapping-fn]
+    (.mapMaterializedValue this (utils/->fn1 mapping-fn)))
   (filter [this pred?]
     (.filter this (utils/->fn1 pred?)))
   (filter-falsy [this pred?]
@@ -511,8 +513,8 @@
 
 (extend-type RunnableGraph
   IStreamOperations
-  (map-materialized-value [this bi-mapping-fn]
-    (.mapMaterializedValue this (utils/->fn2 bi-mapping-fn)))
+  (map-materialized-value [this mapping-fn]
+    (.mapMaterializedValue this (utils/->fn1 mapping-fn)))
   (run [this materializer-or-actor-system]
     (condp instance? materializer-or-actor-system
       ActorSystem (.run this ^ActorSystem materializer-or-actor-system)
@@ -545,3 +547,5 @@
 (defn source-from-materializer
   [f]
   (Source/fromMaterializer (utils/->fn2 f)))
+
+(def ignoring-sink (Sink/ignore))
