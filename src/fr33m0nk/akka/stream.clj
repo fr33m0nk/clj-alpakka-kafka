@@ -520,32 +520,46 @@
       ActorSystem (.run this ^ActorSystem materializer-or-actor-system)
       Materializer (.run this ^Materializer materializer-or-actor-system))))
 
-(defn create-flow
-  []
-  (Flow/create))
-
-(defn flow-from-graph
-  [^Graph graph]
-  (Flow/fromGraph graph))
-
-(defn flow-from-function
-  [f]
-  (Flow/fromFunction (utils/->fn1 f)))
-
-(defn flow-from-sink-and-source
-  [^Graph sink ^Graph source]
-  (Flow/fromSinkAndSource sink source))
-
-(defn flow-from-materializer
-  [f]
-  (Flow/fromMaterializer (utils/->fn2 f)))
-
 (defn source-from-graph
+  "Returns Source from Graph"
   [^Graph graph]
   (Source/fromGraph graph))
 
 (defn source-from-materializer
+  "Returns Source from materializer"
   [f]
   (Source/fromMaterializer (utils/->fn2 f)))
 
-(def ignoring-sink (Sink/ignore))
+(defn create-flow
+  "Creates a Flow"
+  []
+  (Flow/create))
+
+(defn flow-from-graph
+  "Returns Flow from Graph"
+  [^Graph graph]
+  (Flow/fromGraph graph))
+
+(defn flow-from-function
+  "Returns Flow from function"
+  [f]
+  (Flow/fromFunction (utils/->fn1 f)))
+
+(defn flow-from-sink-and-source
+  "Returns flow from Source and Sink graphs"
+  [^Graph sink ^Graph source]
+  (Flow/fromSinkAndSource sink source))
+
+(defn flow-from-materializer
+  "Returns flow from materializer"
+  [f]
+  (Flow/fromMaterializer (utils/->fn2 f)))
+
+(def ^{:doc "Sink that ignores incoming elements"} ignoring-sink (Sink/ignore))
+
+(def ^{:doc "Sink that creates CompletionStage<List<IncomingElements>>"} sequence-sink (Sink/seq))
+
+(defn sink-from-graph
+  "Returns Sink from Graph"
+  [^Graph graph]
+  (Sink/fromGraph graph))
