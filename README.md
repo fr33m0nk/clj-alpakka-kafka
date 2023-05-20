@@ -7,22 +7,22 @@ For further documentation, do refer [Alpakka Kafka official docs](https://doc.ak
 
 Functions are divided in following namespaces:
 
-- `**fr33m0nk.akka.actor**`
+- **`fr33m0nk.akka.actor`**
   - Functions for working with `Akka Actor System`
-- `**fr33m0nk.akka.restart-source**`
+- **`fr33m0nk.akka.restart-source`**
   - Functions for working with Restart Sources
-  - Used for adding fault tolerance and resiliency
-- `**fr33m0nk.akka.stream**`
-  - Functions for working with source and flow streams
+  - Used for [adding fault tolerance and resiliency](https://doc.akka.io/docs/alpakka-kafka/current/errorhandling.html)
+- **`fr33m0nk.akka.stream`**
+  - Functions for working with [Akka source and flow streams](https://doc.akka.io/docs/akka/current/stream/index.html)
   - Only frequently used functions are mapped right now
-- `**fr33m0nk.alpakka-kafka.consumer**`
-  - Functions for working with Kafka Consumer Source and ConsumerControl
-- `**fr33m0nk.alpakka-kafka.producer**`
-  - Functions for working with Kafka Producer Sink and Flow
-- `**fr33m0nk.alpakka-kafka.committer**`
-  - Functions for working with Kafka Committer
-- `**fr33m0nk.alpakka-kafka.transactional**`
-  - Functions for building Transaction pipelines using Transactional Source and Sink
+- **`fr33m0nk.alpakka-kafka.consumer`**
+  - Functions for working with [Alpakka Kafka Consumer Source and ConsumerControl](https://doc.akka.io/docs/alpakka-kafka/current/consumer.html#consumer)
+- **`fr33m0nk.alpakka-kafka.producer`**
+  - Functions for working with [Alpakka Kafka Producer Sink and Flow](https://doc.akka.io/docs/alpakka-kafka/current/producer.html)
+- **`fr33m0nk.alpakka-kafka.committer`**
+  - Functions for working with [Alpakka Kafka Committer Sink](https://doc.akka.io/docs/alpakka-kafka/current/consumer.html#committer-sink)
+- **`fr33m0nk.alpakka-kafka.transactional`**
+  - Functions for building Transaction pipelines using [Transactional Source and Sink](https://doc.akka.io/docs/alpakka-kafka/current/transactions.html)
 
     
 ## License
