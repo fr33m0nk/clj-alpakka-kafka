@@ -68,6 +68,7 @@ com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
 1. [Using Alpakka Kafka stream with a sink](https://github.com/fr33m0nk/clj-alpakka-kafka/blob/main/doc/examples.md#using-alpakka-kafka-stream-with-a-sink)
 2. [Using Alpakka Kafka stream with a Kafka Producer](https://github.com/fr33m0nk/clj-alpakka-kafka/blob/main/doc/examples.md#using-alpakka-kafka-stream-with-a-kafka-producer)
 3. [Using Alpakka Kafka stream and producing multiple records per consumer record](https://github.com/fr33m0nk/clj-alpakka-kafka/blob/main/doc/examples.md#using-alpakka-kafka-stream-with-a-kafka-producer-for-producing-multiple-messages)
+4. [Using Alpakka Kafka stream with At-Least-Once Delivery](https://github.com/fr33m0nk/clj-alpakka-kafka/blob/main/doc/examples.md#using-alpakka-kafka-stream-with-at-least-once-delivery)
     
 ## License
 

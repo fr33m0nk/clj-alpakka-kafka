@@ -209,7 +209,63 @@
 
 #### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/atleastonce.html#multiple-effects-per-commit)
 
+1. We well create a new stream topology
+- This topology consumes messages
+- `s/map-async` executes mapping function with 2 messages being processed in parallel and produces multiple producer records
+- These producer-records are wrapped in `producer/multi-producer-message-envelope` which ensures offset commits only happen when all the producer-records are published
+- Then we will publish messages to another topic and commit offsets to Kafka via `s/to-mat` and `producer/committable-sink`
+- Finally, we run the stream with our actor-system using `s/run`
+```clojure
+(defn test-stream-producing-multiple-messages-with-at-least-once-semantics
+  [actor-system consumer-settings committer-settings producer-settings consumer-topics producer-topic]
+  (-> (consumer/->committable-source consumer-settings consumer-topics)
+      (s/map-async 2
+                   (fn [message]
+                     (let [_key (consumer/key message)      ;; Don't care as it is null
+                           value (consumer/value message)
+                           committable-offset (consumer/committable-offset message)
+                           messages-to-publish (->> (repeat 3 value)
+                                                    (mapv #(producer/->producer-record producer-topic (str/upper-case %))))]
+                       (producer/multi-producer-message-envelope committable-offset messages-to-publish))))
+      (s/via (producer/flexi-flow producer-settings))
+      (s/map producer/producer-message-passthrough)
+      (s/to-mat (committer/sink committer-settings) consumer/create-draining-control)
+      (s/run actor-system)))
+```
+2. Let's create required dependencies
+```clojure
+(def actor-system (actor/->actor-system "test-actor-system"))
 
+(def committer-settings (committer/committer-settings actor-system {:batch-size 1}))
 
+(def consumer-settings (consumer/consumer-settings actor-system
+                                                   {:group-id "a-test-consumer"
+                                                    :bootstrap-servers "localhost:9092"
+                                                    :key-deserializer (StringDeserializer.)
+                                                    :value-deserializer (StringDeserializer.)}))
+
+(def producer-settings (producer/producer-settings actor-system {:bootstrap-servers "localhost:9092"
+                                                                 :key-serializer (StringSerializer.)
+                                                                 :value-serializer (StringSerializer.)}))
+```
+3. Let's run the stream and see it in action
+```clojure
+(def consumer-control (test-stream-producing-multiple-messages-with-at-least-once-semantics actor-system consumer-settings committer-settings producer-settings ["testing_stuff"] "output-topic"))
+```
+4. Streams in action 😃
 <img width="2849" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/510fed9f-efb4-4ec4-a031-0b24c51c5462">
 
+5. Let's shutdown the stream now
+
+```clojure
+;; shutdown streams using consumer-control var
+@(consumer/drain-and-shutdown consumer-control
+                             (CompletableFuture/supplyAsync
+                               (utils/->fn0 (fn [] ::done)))
+                             (actor/get-dispatcher actor-system))
+```
+6. Let's shutdown our actor-system as well
+
+```clojure
+@(actor/terminate actor-system)
+```
