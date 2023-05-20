@@ -28,9 +28,8 @@
   (-> (consumer/->committable-source consumer-settings consumer-topics)
       (s/map-async 2
                    (fn [message]
-                     (let [consumer-record (consumer/consumer-record message)
-                           key (.key consumer-record)
-                           value (.value consumer-record)]
+                     (let [key (consumer/key message)
+                           value (consumer/value message)]
                        ;; Do business processing    
                        (println "Key is " key)
                        (println "Value is " value))
