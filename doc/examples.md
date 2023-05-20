@@ -1,6 +1,8 @@
 # Introduction to fr33m0nk/clj-alpakka-kafka
 
-## Using Alpakka Kafka stream with a sink
+## Using Alpakka Kafka stream with a sink 
+
+#### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/consumer.html#offset-storage-in-kafka-committing)
 
 1. First we will import required namespaces:
 
