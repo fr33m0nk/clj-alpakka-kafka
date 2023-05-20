@@ -142,12 +142,13 @@
 ```
 
 ## Using Alpakka Kafka stream with a Kafka Producer for producing multiple messages
-```clojure
-(require '[fr33m0nk.alpakka-kafka.producer :as producer])
-```
-2. We well create a new stream topology
+
+#### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/consumer.html#connecting-producer-and-consumer)
+
+1. We well create a new stream topology
 - This topology consumes messages
-- `s/map-async` executes mapping function with 2 messages being processed in parallel
+- `s/map-async` executes mapping function with 2 messages being processed in parallel and produces multiple producer records
+- These producer-records are wrapped in `producer/multi-producer-message-envelope` which ensures offset commits only happen when all the producer-records are published
 - Then we will publish messages to another topic and commit offsets to Kafka via `s/to-mat` and `producer/committable-sink`
 - Finally, we run the stream with our actor-system using `s/run`
 ```clojure
@@ -165,7 +166,7 @@
       (s/to-mat (producer/committable-sink producer-settings committer-settings) consumer/create-draining-control)
       (s/run actor-system)))
 ```
-3. Let's create required dependencies
+2. Let's create required dependencies
 ```clojure
 (def actor-system (actor/->actor-system "test-actor-system"))
 
@@ -181,15 +182,15 @@
                                                                  :key-serializer (StringSerializer.)
                                                                  :value-serializer (StringSerializer.)}))
 ```
-4. Let's run the stream and see it in action
+3. Let's run the stream and see it in action
 ```clojure
 (def consumer-control (test-stream-with-producing-multiple-messages actor-system consumer-settings committer-settings producer-settings ["testing_stuff"] "output-topic"))
 ```
-5. Streams in action 😃
+4. Streams in action 😃
 <img width="1571" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/20ad1533-e50a-4040-96ce-a9694db3b524">
    
 
-6. Let's shutdown the stream now
+5. Let's shutdown the stream now
 
 ```clojure
 ;; shutdown streams using consumer-control var
@@ -198,7 +199,7 @@
                                (utils/->fn0 (fn [] ::done)))
                              (actor/get-dispatcher actor-system))
 ```
-7. Let's shutdown our actor-system as well
+6. Let's shutdown our actor-system as well
 
 ```clojure
 @(actor/terminate actor-system)
