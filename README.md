@@ -3,6 +3,8 @@
 `clj-alpakka-kafka` is a a simple library that wraps over [**Alpakka Kafka**](https://github.com/akka/alpakka-kafka) and offers convenience methods for easy implementation in Clojure code. 
 For further documentation, do refer [Alpakka Kafka official docs](https://doc.akka.io/docs/alpakka-kafka/current/home.html).
 
+[![Clojars Project](https://img.shields.io/clojars/v/net.clojars.fr33m0nk/clj-alpakka-kafka.svg)](https://clojars.org/net.clojars.fr33m0nk/clj-alpakka-kafka)
+
 ## Usage
 
 ### Functions are divided in following namespaces:
