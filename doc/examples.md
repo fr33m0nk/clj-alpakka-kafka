@@ -274,9 +274,11 @@
 
 #### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/errorhandling.html#restarting-the-stream-with-a-backoff-stage)
 
-1. We will add a restart-counter to keep restart-source's action count
+1. We will add a restart-counter to keep restart-source's action count and require restart-source namespace
 ```clojure
 (def restart-counter (atom 0))
+
+(require '[fr33m0nk.akka.restart-source :as restart])
 ```
 2. Due to limitation with the design of restart-source, consumer-control is not directly accessible. In order to gain access, we will use an atom
   - Reference
