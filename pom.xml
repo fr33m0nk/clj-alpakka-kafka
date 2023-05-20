@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.clojars.fr33m0nk</groupId>
     <artifactId>clj-actor</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <name>fr33m0nk/clj-alpakka-kafka</name>
     <description>Clojure wrapper for Alpakka Kafka.</description>
     <url>https://github.com/fr33m0nk/clj-alpakka-kafka</url>
@@ -23,7 +23,7 @@
         <url>https://github.com/fr33m0nk/clj-actor</url>
         <connection>scm:git:git://github.com/fr33m0nk/clj-actor.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/fr33m0nk/clj-actor.git</developerConnection>
-        <tag>v0.1.0</tag>
+        <tag>v0.1.1</tag>
     </scm>
     <dependencies>
         <dependency>
