@@ -208,3 +208,8 @@
 ## Using Alpakka Kafka stream with At-Least-Once Delivery
 
 #### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/atleastonce.html#multiple-effects-per-commit)
+
+
+
+<img width="2849" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/510fed9f-efb4-4ec4-a031-0b24c51c5462">
+
