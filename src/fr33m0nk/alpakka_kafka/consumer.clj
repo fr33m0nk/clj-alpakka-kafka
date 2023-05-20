@@ -1,5 +1,6 @@
 (ns fr33m0nk.alpakka-kafka.consumer
   "Akka Stream connector for subscribing to Kafka topics"
+  (:refer-clojure :exclude [key])
   (:require [clojure.string :as str]
             [fr33m0nk.utils :as utils])
   (:import (akka.actor ActorRef ActorSystem)
@@ -10,7 +11,7 @@
            (java.util Map Set)
            (java.util.concurrent CompletionStage TimeUnit)
            (jdk.jpackage.internal Executor)
-           (org.apache.kafka.clients.consumer ConsumerConfig)
+           (org.apache.kafka.clients.consumer ConsumerConfig ConsumerRecord)
            (org.apache.kafka.common.serialization Deserializer)
            (scala.concurrent.duration FiniteDuration)))
 
@@ -110,11 +111,11 @@
 
 (defprotocol IControl
   "Materialized value of the consumer Source"
-  (drain-and-shutdown [this stream-completion executor] "Stop producing messages from the Source, wait for stream completion and shut down the consumer Source so that all consumed messages reach the end of the stream. Failures in stream completion will be propagated, the source will be shut down anyway.")
-  (get-metrics [this] "Exposes underlying consumer or producer metrics (as reported by underlying Kafka client library)")
-  (shutdown? [this] "Shutdown status. The CompletionStage will be completed when the stage has been shut down and the underlying KafkaConsumer has been closed. Shutdown can be triggered from downstream cancellation, errors, or #shutdown.")
-  (shutdown [this] "Shutdown the consumer Source. It will wait for outstanding offset commit requests before shutting down")
-  (stop [this] "Stop producing messages from the Source. This does not stop underlying kafka consumer and does not unsubscribe from any topics/partitions."))
+  (drain-and-shutdown [consumer-control ^CompletionStage stream-completion executor] "Stop producing messages from the Source, wait for stream completion and shut down the consumer Source so that all consumed messages reach the end of the stream. Failures in stream completion will be propagated, the source will be shut down anyway.")
+  (get-metrics [consumer-control] "Exposes underlying consumer or producer metrics (as reported by underlying Kafka client library)")
+  (shutdown? [consumer-control] "Shutdown status. The CompletionStage will be completed when the stage has been shut down and the underlying KafkaConsumer has been closed. Shutdown can be triggered from downstream cancellation, errors, or #shutdown.")
+  (shutdown [consumer-control] "Shutdown the consumer Source. It will wait for outstanding offset commit requests before shutting down")
+  (stop [consumer-control] "Stop producing messages from the Source. This does not stop underlying kafka consumer and does not unsubscribe from any topics/partitions."))
 
 (extend-type Consumer$Control
   IControl
@@ -129,16 +130,46 @@
   (stop [this]
     (.stop this)))
 
-(defn committable-offset
-  "ConsumerMessage is the Output element of committableSource.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$CommittableMessage.html#committableOffset:akka.kafka.ConsumerMessage.CommittableOffset"
-  ^ConsumerMessage$CommittableOffset
-  [^ConsumerMessage$CommittableMessage committable-message]
-  (.committableOffset committable-message))
+(defprotocol IConsumerMessage
+  (consumer-record [^ConsumerMessage$CommittableMessage committable-message] "Extracts consumer-record from an instance of CommittableMessage")
+  (committable-offset [^ConsumerMessage$CommittableMessage committable-message]
+    "ConsumerMessage is the Output element of committableSource.
+  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$CommittableMessage.html#committableOffset:akka.kafka.ConsumerMessage.CommittableOffset")
+  (partition-offset [^ConsumerMessage$TransactionalMessage transactional-message]
+    "Output element of transactionalSource. The offset is automatically committed as by the Producer
+  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$TransactionalMessage.html#partitionOffset:akka.kafka.ConsumerMessage.PartitionOffset"))
 
-(defn partition-offset
-  "Output element of transactionalSource. The offset is automatically committed as by the Producer
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$TransactionalMessage.html#partitionOffset:akka.kafka.ConsumerMessage.PartitionOffset"
-  ^ConsumerMessage$PartitionOffset
-  [^ConsumerMessage$TransactionalMessage transactional-message]
-  (.partitionOffset transactional-message))
+(defprotocol IConsumerRecord
+  (key [committable-message-or-consumer-record])
+  (value [committable-message-or-consumer-record]))
+
+(extend-type ConsumerMessage$CommittableMessage
+  IConsumerMessage
+  (consumer-record [this]
+    (.record this))
+  (committable-offset [this]
+    (.committableOffset this))
+  IConsumerRecord
+  (key [this]
+    (key (consumer-record this)))
+  (value [this]
+    (value (consumer-record this))))
+
+(extend-type ConsumerMessage$TransactionalMessage
+  IConsumerMessage
+  (consumer-record [this]
+    (.record this))
+  (partition-offset [this]
+    (.partitionOffset this))
+  IConsumerRecord
+  (key [this]
+    (key (consumer-record this)))
+  (value [this]
+    (value (consumer-record this))))
+
+(extend-type ConsumerRecord
+  IConsumerRecord
+  (key [this]
+    (.key this))
+  (value [this]
+    (.value this)))
