@@ -140,8 +140,8 @@
   https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$TransactionalMessage.html#partitionOffset:akka.kafka.ConsumerMessage.PartitionOffset"))
 
 (defprotocol IConsumerRecord
-  (key [committable-message-or-consumer-record])
-  (value [committable-message-or-consumer-record]))
+  (key [alpakka-consumer-message-or-kafka-consumer-record] "Fetches Key of the consumer record")
+  (value [alpakka-consumer-message-or-kafka-consumer-record] "Fetches value of the consumer record"))
 
 (extend-type ConsumerMessage$CommittableMessage
   IConsumerMessage
