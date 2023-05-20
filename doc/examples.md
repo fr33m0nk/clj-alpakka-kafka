@@ -126,7 +126,7 @@
 5. Streams in action 😃
 <img width="1724" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/3176e50d-f5c3-453b-830f-c97f2aecfdaf">
 
-7. Let's shutdown the stream now
+6. Let's shutdown the stream now
 
 ```clojure
 ;; shutdown streams using consumer-control var
