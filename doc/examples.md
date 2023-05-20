@@ -370,6 +370,7 @@ clojure.lang.ExceptionInfo: Simulating processing failure {:error-count 3}
 ```
 
 7. After 3 restarts, state of stream is healthy again 😃
+<img width="2850" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/09f885a2-ddcc-4c31-88a2-340d6b4a202e">
 
 
 8. Let's shutdown the stream now
