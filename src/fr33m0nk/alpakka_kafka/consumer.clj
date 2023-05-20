@@ -20,7 +20,7 @@
   [topics]
   (Subscriptions/topics ^Set (set topics)))
 
-(defn ->consumer-settings
+(defn consumer-settings
   "Settings for consumers. See akka.kafka.consumer section in reference.conf
   https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerSettings.html
   - Expects consumer-properties to be supplied with kebab-case-keyword keys

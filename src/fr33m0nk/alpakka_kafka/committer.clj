@@ -6,10 +6,10 @@
 
 (defn committer-settings
   ^CommitterSettings
-  [^ActorSystem actor-system & {:keys [batch-size max-interval-in-ms parallelism wait-for-commit-ack commit-when-offset-first-observed]
-                                :or {wait-for-commit-ack true
-                                     commit-when-offset-first-observed true}
-                                :as _options}]
+  [^ActorSystem actor-system {:keys [batch-size max-interval-in-ms parallelism wait-for-commit-ack commit-when-offset-first-observed]
+                              :or {wait-for-commit-ack true
+                                   commit-when-offset-first-observed true}
+                              :as _options}]
   (cond-> (CommitterSettings/create actor-system)
     batch-size (.withMaxBatch batch-size)
     max-interval-in-ms (.withMaxInterval (Duration/ofMillis max-interval-in-ms))
