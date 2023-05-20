@@ -65,7 +65,7 @@
 
 ```clojure
 ;; shutdown streams using consumer-control var
-(consumer/drain-and-shutdown consumer-control
+@(consumer/drain-and-shutdown consumer-control
                              (CompletableFuture/supplyAsync
                                (utils/->fn0 (fn [] ::done)))
                              (actor/get-dispatcher actor-system))
@@ -73,7 +73,7 @@
 6. Let's shutdown our actor-system as well
 
 ```clojure
-(actor/terminate actor-system)
+@(actor/terminate actor-system)
 ```
 
 ## Using Alpakka Kafka stream with a Kafka Producer
@@ -130,7 +130,7 @@
 
 ```clojure
 ;; shutdown streams using consumer-control var
-(consumer/drain-and-shutdown consumer-control
+@(consumer/drain-and-shutdown consumer-control
                              (CompletableFuture/supplyAsync
                                (utils/->fn0 (fn [] ::done)))
                              (actor/get-dispatcher actor-system))
@@ -138,7 +138,7 @@
 7. Let's shutdown our actor-system as well
 
 ```clojure
-(actor/terminate actor-system)
+@(actor/terminate actor-system)
 ```
 
 ## Using Alpakka Kafka stream with a Kafka Producer for producing multiple messages
@@ -193,7 +193,7 @@
 
 ```clojure
 ;; shutdown streams using consumer-control var
-(consumer/drain-and-shutdown consumer-control
+@(consumer/drain-and-shutdown consumer-control
                              (CompletableFuture/supplyAsync
                                (utils/->fn0 (fn [] ::done)))
                              (actor/get-dispatcher actor-system))
@@ -201,5 +201,5 @@
 7. Let's shutdown our actor-system as well
 
 ```clojure
-(actor/terminate actor-system)
+@(actor/terminate actor-system)
 ```
