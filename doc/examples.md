@@ -186,6 +186,7 @@
 (def consumer-control (test-stream-with-producing-multiple-messages actor-system consumer-settings committer-settings producer-settings ["testing_stuff"] "output-topic"))
 ```
 5. Streams in action 😃
+<img width="1571" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/20ad1533-e50a-4040-96ce-a9694db3b524">
    
 
 6. Let's shutdown the stream now
