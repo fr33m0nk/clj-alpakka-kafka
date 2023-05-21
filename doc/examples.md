@@ -459,6 +459,8 @@ clojure.lang.ExceptionInfo: Simulating processing failure {:error-count 3}
                                                                    ["testing_stuff"]
                                                                    "output-topic"))
 ```
+<img width="1568" alt="image" src="https://github.com/fr33m0nk/clj-alpakka-kafka/assets/43627165/cad3fc93-25e6-4f32-aecd-58d072922001">
+
 
 6. Let's shutdown the stream now
 
