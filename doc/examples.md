@@ -388,7 +388,7 @@ clojure.lang.ExceptionInfo: Simulating processing failure {:error-count 3}
 @(actor/terminate actor-system)
 ```
 
-## Using Alpakka Kafka stream with Transactional Sources
+## Using Alpakka Kafka stream with Transactional Source and Sink
 
 #### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/transactions.html#recovery-from-failure)
 
