@@ -292,8 +292,8 @@
 - This topology consumes messages
 - `s/map` executes mapping function with 2 messages being processed in parallel and produces multiple producer records
 - These producer-records are wrapped in `producer/multi-producer-message-envelope` which ensures offset commits only happen when all the producer-records are published
-- Then we will publish messages to another topic and commit offsets to Kafka via `s/to-mat` and `producer/committable-sink`
-- Finally, we run the stream with our actor-system using `s/run`
+- Then we will publish messages to another topic and commit offsets to Kafka via `s/via` and `producer/flexi-flow` and `committer/flow`
+- Finally, we run the RestartSource with our actor-system using `s/run-with`
 ```clojure
 (defn test-stream-with-error-handling
   [actor-system restart-settings consumer-settings committer-settings producer-settings consumer-topics producer-topic]
@@ -383,6 +383,93 @@ clojure.lang.ExceptionInfo: Simulating processing failure {:error-count 3}
                               (actor/get-dispatcher actor-system))
 ```
 9. Let's shutdown our actor-system as well
+
+```clojure
+@(actor/terminate actor-system)
+```
+
+## Using Alpakka Kafka stream with Transactional Sources
+
+#### This is Clojure adaptation of example from [Alpakka Kafka documentation](https://doc.akka.io/docs/alpakka-kafka/current/transactions.html#recovery-from-failure)
+
+1. We will require transactional namespace for setting sink up Transactional flow
+```clojure
+(require '[fr33m0nk.alpakka-kafka.transactional :as transactional])
+```
+2. Due to limitation with the design of restart-source, consumer-control is not directly accessible. In order to gain access, we will use an atom
+- Reference
+    - https://doc.akka.io/docs/alpakka-kafka/current/errorhandling.html#restarting-the-stream-with-a-backoff-stage
+    - https://github.com/akka/alpakka-kafka/issues/1291
+```clojure
+(def consumer-control-reference (atom nil))
+```
+3. We will create a new stream topology such that
+- This topology uses a Transactional source and flow and wraps it over RestartSource
+- This topology consumes messages
+- `s/map-async` executes mapping function with 2 messages being processed in parallel and produces multiple producer records
+- These producer-records are wrapped in `producer/multi-producer-message-envelope` which ensures offset commits only happen when all the producer-records are published
+- Then we will publish messages to another topic and commit offsets to Kafka via `s/via` and using `transactional/transactional-flow` and `committer/flow`
+- Finally, we run the RestartSource with our actor-system using `s/run-with`
+```clojure
+(defn test-transactional-stream-with-error-handling
+  [actor-system restart-settings consumer-settings committer-settings producer-settings consumer-topics producer-topic]
+  (-> (restart/->restart-source-on-failures-with-backoff
+        restart-settings
+        (fn []
+          (-> (transactional/->transactional-source consumer-settings consumer-topics)
+              ;; Hack to gain access to underlying consumer control instance
+              ;; reference https://github.com/akka/alpakka-kafka/issues/1291
+              ;; reference https://doc.akka.io/docs/alpakka-kafka/current/errorhandling.html#restarting-the-stream-with-a-backoff-stage
+              (s/map-materialized-value (fn [consumer-control] (swap! consumer-control-reference #(identity %2) consumer-control) consumer-control))
+              (s/map-async 2 (fn [message]
+                               (let [_key (consumer/key message) ;; Don't care as it is null
+                                     value (consumer/value message)
+                                     partition-offset (consumer/partition-offset message)
+                                     messages-to-publish (->> (repeat 3 value)
+                                                              (mapv #(producer/->producer-record producer-topic (str/upper-case %))))]
+                                 (producer/multi-producer-message-envelope partition-offset messages-to-publish))))
+              (s/via (transactional/transactional-flow producer-settings (str (random-uuid)))))))
+      (s/run-with s/ignoring-sink actor-system)))
+```
+4. Let's create required dependencies
+```clojure
+(def actor-system (actor/->actor-system "test-actor-system"))
+
+(def committer-settings (committer/committer-settings actor-system {:batch-size 1}))
+
+(def consumer-settings (consumer/consumer-settings actor-system
+                                                   {:group-id "a-test-consumer"
+                                                    :bootstrap-servers "localhost:9092"
+                                                    :key-deserializer (StringDeserializer.)
+                                                    :value-deserializer (StringDeserializer.)}))
+
+(def producer-settings (producer/producer-settings actor-system {:bootstrap-servers "localhost:9092"
+                                                                 :key-serializer (StringSerializer.)
+                                                                 :value-serializer (StringSerializer.)}))
+
+(def restart-settings (restart/restart-settings 1000 5000 0.2 {}))
+```
+5. Let's run the stream and see it in action
+```clojure
+(def restart-source (test-transactional-stream-with-error-handling actor-system
+                                                                   restart-settings
+                                                                   consumer-settings
+                                                                   committer-settings
+                                                                   producer-settings
+                                                                   ["testing_stuff"]
+                                                                   "output-topic"))
+```
+
+6. Let's shutdown the stream now
+
+```clojure
+;; shutdown streams using consumer-control var
+@(consumer/drain-and-shutdown @consumer-control-reference
+                              (CompletableFuture/supplyAsync
+                                (utils/->fn0 (fn [] ::done)))
+                              (actor/get-dispatcher actor-system))
+```
+7. Let's shutdown our actor-system as well
 
 ```clojure
 @(actor/terminate actor-system)
