@@ -428,7 +428,7 @@ clojure.lang.ExceptionInfo: Simulating processing failure {:error-count 3}
                                      messages-to-publish (->> (repeat 3 value)
                                                               (mapv #(producer/->producer-record producer-topic (str/upper-case %))))]
                                  (producer/multi-producer-message-envelope partition-offset messages-to-publish))))
-              (s/via (transactional/transactional-flow producer-settings (str (random-uuid)))))))
+              (s/via (transactional/transactional-flow producer-settings "unique-transaction-id-for-this-application")))))
       (s/run-with s/ignoring-sink actor-system)))
 ```
 4. Let's create required dependencies
