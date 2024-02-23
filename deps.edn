@@ -1,11 +1,10 @@
 {:paths ["src" "resources"]
- :deps {com.typesafe.akka/akka-stream-kafka_2.13 {:mvn/version "4.0.2"}
-        com.typesafe.akka/akka-stream_2.13 {:mvn/version "2.8.0"}
-        org.scala-lang/scala-library {:mvn/version "2.13.10"}
-        org.clojure/clojure {:mvn/version "1.11.1"}}
+ :deps {com.typesafe.akka/akka-stream-kafka_2.13 {:mvn/version "5.0.0"}
+        com.typesafe.akka/akka-stream_2.13 {:mvn/version "2.9.1"}
+        org.scala-lang/scala-library {:mvn/version "2.13.13"}}
  :aliases
- {:dev {:deps {org.apache.kafka/kafka-clients {:mvn/version "3.3.2"}
-               org.clojure/clojure {:mvn/version "1.11.1"}
+ {:dev {:deps {org.apache.kafka/kafka-clients {:mvn/version "3.6.1"}
+               org.clojure/clojure {:mvn/version "1.12.0-alpha7"}
                com.taoensso/timbre {:mvn/version "6.1.0"}
                com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}}}
   :test
