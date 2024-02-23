@@ -22,7 +22,7 @@
 
 (defn consumer-settings
   "Settings for consumers. See akka.kafka.consumer section in reference.conf
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerSettings.html
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/ConsumerSettings.html
   - Expects consumer-properties to be supplied with kebab-case-keyword keys
     Full config list can be found in org.apache.kafka.clients.consumer.ConsumerConfig"
   ^ConsumerSettings
@@ -47,7 +47,7 @@
 
 (defn consumer-settings-from-actor-system-config
   "Settings for consumers. See akka.kafka.consumer section in reference.conf
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerSettings.html
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/ConsumerSettings.html
   - Expects consumer-properties to be supplied with kebab-case-keyword keys
     Full config list can be found in org.apache.kafka.clients.consumer.ConsumerConfig"
   ^ConsumerSettings
@@ -63,20 +63,20 @@
 
 (defn ->committable-source
   "The committableSource makes it possible to commit offset positions to Kafka.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#committableSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#committableSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.kafka.javadsl.Consumer.Control]"
   ^Source
   [^ConsumerSettings consumer-settings topics]
   (Consumer/committableSource consumer-settings (topics->subscriptions topics)))
 
 (defn ->at-most-once-source
   "Convenience for 'at-most once delivery' semantics.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#atMostOnceSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#atMostOnceSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics]
   (Consumer/atMostOnceSource consumer-settings (topics->subscriptions topics)))
 
 (defn ->committable-external-source
   "The same as #plainExternalSource but with offset commit support.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#committableExternalSource[K,V](consumer:akka.actor.ActorRef,subscription:akka.kafka.ManualSubscription,groupId:String,commitTimeout:scala.concurrent.duration.FiniteDuration):akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#committableExternalSource[K,V](consumer:akka.actor.ActorRef,subscription:akka.kafka.ManualSubscription,groupId:String,commitTimeout:scala.concurrent.duration.FiniteDuration):akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.kafka.javadsl.Consumer.Control]"
   [^ActorRef consumer topic-partitions ^String group-id ^FiniteDuration commit-timeout-in-nanos]
   (Consumer/committableExternalSource consumer
                                       (Subscriptions/assignment ^Set (set topic-partitions))
@@ -85,47 +85,47 @@
 
 (defn ->committable-partitioned-source
   "The same as #plainPartitionedSource but with offset commit support.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#committablePartitionedSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.AutoSubscription):akka.stream.javadsl.Source[akka.japi.Pair[org.apache.kafka.common.TopicPartition,akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.NotUsed]],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#committablePartitionedSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.AutoSubscription):akka.stream.javadsl.Source[akka.japi.Pair[org.apache.kafka.common.TopicPartition,akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.NotUsed]],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics]
   (Consumer/committablePartitionedSource consumer-settings (topics->subscriptions topics)))
 
 (defn ->commit-with-metadata-source
   "The commitWithMetadataSource makes it possible to add additional metadata (in the form of a string) when an offset is committed based on the record.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#commitWithMetadataSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription,metadataFromRecord:java.util.function.Function[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],String]):akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#commitWithMetadataSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription,metadataFromRecord:java.util.function.Function[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],String]):akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics consumer-record-metadata-extractor]
   (Consumer/commitWithMetadataSource consumer-settings (topics->subscriptions topics) (utils/->fn1 consumer-record-metadata-extractor)))
 
 (defn ->commit-with-metadata-partitioned-source
   "The same as #plainPartitionedSource but with offset commit with metadata support.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#commitWithMetadataPartitionedSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.AutoSubscription,metadataFromRecord:java.util.function.Function[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],String]):akka.stream.javadsl.Source[akka.japi.Pair[org.apache.kafka.common.TopicPartition,akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.NotUsed]],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#commitWithMetadataPartitionedSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.AutoSubscription,metadataFromRecord:java.util.function.Function[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],String]):akka.stream.javadsl.Source[akka.japi.Pair[org.apache.kafka.common.TopicPartition,akka.stream.javadsl.Source[akka.kafka.ConsumerMessage.CommittableMessage[K,V],akka.NotUsed]],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics consumer-record-metadata-extractor]
   (Consumer/commitWithMetadataPartitionedSource consumer-settings (topics->subscriptions topics) (utils/->fn1 consumer-record-metadata-extractor)))
 
 (defn ->plain-partitioned-source
   "The plainPartitionedSource is a way to track automatic partition assignment from kafka.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#plainPartitionedSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.AutoSubscription):akka.stream.javadsl.Source[akka.japi.Pair[org.apache.kafka.common.TopicPartition,akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.NotUsed]],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#plainPartitionedSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.AutoSubscription):akka.stream.javadsl.Source[akka.japi.Pair[org.apache.kafka.common.TopicPartition,akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.NotUsed]],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics]
   (Consumer/plainPartitionedSource consumer-settings ^Set (set topics)))
 
 (defn ->plain-source
   "The plainSource emits ConsumerRecord elements (as received from the underlying KafkaConsumer). It has no support for committing offsets to Kafka. It can be used when the offset is stored externally or with auto-commit (note that auto-commit is by default disabled)
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#plainSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.kafka.javadsl.Consumer.Control]"
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#plainSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics]
   (Consumer/plainSource consumer-settings (Subscriptions/topics (set topics))))
 
 (def
   ^{:doc "Combine control and a stream completion signal materialized values into one, so that the stream can be stopped in a controlled way without losing commits
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#createDrainingControl[T](c:akka.kafka.javadsl.Consumer.Control,mat:java.util.concurrent.CompletionStage[T]):akka.kafka.javadsl.Consumer.DrainingControl[T]"}
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#createDrainingControl[T](c:akka.kafka.javadsl.Consumer.Control,mat:java.util.concurrent.CompletionStage[T]):akka.kafka.javadsl.Consumer.DrainingControl[T]"}
   create-draining-control (utils/->fn2 (fn [control mat] (Consumer/createDrainingControl control mat))))
 
 (def
   ^{:doc "Combine control and a stream completion signal materialized values into one, so that the stream can be stopped in a controlled way without losing commits
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#createDrainingControl[T](pair:akka.japi.Pair[akka.kafka.javadsl.Consumer.Control,java.util.concurrent.CompletionStage[T]]):akka.kafka.javadsl.Consumer.DrainingControl[T]"}
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#createDrainingControl[T](pair:akka.japi.Pair[akka.kafka.javadsl.Consumer.Control,java.util.concurrent.CompletionStage[T]]):akka.kafka.javadsl.Consumer.DrainingControl[T]"}
   create-draining-control-with-pair (utils/->fn1 (fn [^Pair pair] (Consumer/createDrainingControl pair))))
 
 (def
   ^{:doc "Combine control and a stream completion signal materialized values into one, so that the stream can be stopped in a controlled way without losing commits
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#createNoopControl():akka.kafka.javadsl.Consumer.Control"}
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/javadsl/Consumer$.html#createNoopControl():akka.kafka.javadsl.Consumer.Control"}
   create-noop-control (Consumer/createNoopControl))
 
 (defprotocol IControl
@@ -153,10 +153,10 @@
   (consumer-record [^ConsumerMessage$CommittableMessage committable-message] "Extracts consumer-record from an instance of CommittableMessage")
   (committable-offset [^ConsumerMessage$CommittableMessage committable-message]
     "ConsumerMessage is the Output element of committableSource.
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$CommittableMessage.html#committableOffset:akka.kafka.ConsumerMessage.CommittableOffset")
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/ConsumerMessage$$CommittableMessage.html#committableOffset:akka.kafka.ConsumerMessage.CommittableOffset")
   (partition-offset [^ConsumerMessage$TransactionalMessage transactional-message]
     "Output element of transactionalSource. The offset is automatically committed as by the Producer
-  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerMessage$$TransactionalMessage.html#partitionOffset:akka.kafka.ConsumerMessage.PartitionOffset"))
+  https://doc.akka.io/api/alpakka-kafka/5.0.0/akka/kafka/ConsumerMessage$$TransactionalMessage.html#partitionOffset:akka.kafka.ConsumerMessage.PartitionOffset"))
 
 (defprotocol IConsumerRecord
   (key [alpakka-consumer-message-or-kafka-consumer-record] "Fetches Key of the consumer record")
