@@ -16,7 +16,9 @@
                 clj-test-containers/clj-test-containers {:mvn/version "0.7.4"
                                                          :exclusions [org.clojure/clojure
                                                                       org.slf4j/slf4j-api]}
-                org.testcontainers/kafka {:mvn/version "1.19.6"}}}
+                org.testcontainers/kafka {:mvn/version "1.19.6"}}
+   :main-opts ["-m" "cognitect.test-runner"]
+   :exec-fn cognitect.test-runner.api/test}
   :build {:deps {io.github.clojure/tools.build
                  {:git/tag "v0.9.2" :git/sha "fe6b140"}
                  slipset/deps-deploy {:mvn/version "0.2.0"}}

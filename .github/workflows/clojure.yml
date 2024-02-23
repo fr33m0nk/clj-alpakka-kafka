@@ -22,5 +22,7 @@ jobs:
         uses: DeLaGuardo/setup-clojure@12.3
         with:
           cli: latest
-      - name: run tests & build jar
+      - name: Run tests
+        run: clojure -A:dev:test -X:test
+      - name: Build jar
         run: clojure -A:deps:dev:test -T:build ci
