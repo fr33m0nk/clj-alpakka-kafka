@@ -25,7 +25,7 @@
       (s/run actor-system)))
 
 (deftest kafka-stream-with-producer-test
-  (testing "kafka stream with producer test"
+  (testing "kafka stream producing multiple messages per consumed message test"
     (ftu/with-kafka-test-container in-topic out-topic bootstrap-servers
       (let [actor-system (actor/->actor-system "test-actor-system")
             committer-settings (committer/committer-settings actor-system {:batch-size 2})
