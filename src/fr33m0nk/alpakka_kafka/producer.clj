@@ -23,6 +23,17 @@
         (.withBootstrapServers bootstrap-servers)
         (.withProperties ^Map producer-config))))
 
+(defn producer-settings-from-actor-system-config
+  "Settings for producers. See akka.kafka.producer section in reference.conf
+  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ProducerSettings.html
+  - Expects producer-properties to be supplied with kebab-case-keyword keys
+    Full config list can be found in org.apache.kafka.clients.producer.ProducerConfig"
+  ^ProducerSettings
+  [^ActorSystem actor-system {:keys [producer-config-key key-serializer value-serializer bootstrap-servers]}]
+  (let [producer-config (-> actor-system .settings .config (.getConfig producer-config-key))]
+    (-> (ProducerSettings/create producer-config ^Serializer key-serializer ^Serializer value-serializer)
+        (.withBootstrapServers bootstrap-servers))))
+
 (defprotocol IProducerMessage
   "PassThroughMessage does not publish anything, and continues in the stream as PassThroughResult"
   (producer-message-passthrough [producer-message-envelope] "https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ProducerMessage$$Envelope.html#passThrough:PassThrough")
