@@ -26,21 +26,40 @@
   - Expects consumer-properties to be supplied with kebab-case-keyword keys
     Full config list can be found in org.apache.kafka.clients.consumer.ConsumerConfig"
   ^ConsumerSettings
-  [^ActorSystem actor-system {:keys [group-id key-deserializer value-deserializer bootstrap-servers auto-offset-reset enable-auto-commit]
+  [^ActorSystem actor-system {:keys [group-id key-deserializer value-deserializer bootstrap-servers auto-offset-reset enable-auto-commit cooperative-sticky-assignor?]
                               :or {auto-offset-reset "latest"
-                                   enable-auto-commit "false"}
+                                   enable-auto-commit "false"
+                                   cooperative-sticky-assignor? false}
                               :as consumer-properties}]
   (let [consumer-config (-> consumer-properties
                             (dissoc :group-id :key-deserializer :value-deserializer :bootstrap-servers :auto-offset-reset :enable-auto-commit)
-                            (update-keys (fn [key] (-> key name (str/replace #"-" ".")))))]
-    (-> (ConsumerSettings/create actor-system ^Deserializer key-deserializer ^Deserializer value-deserializer)
-        (.withGroupId group-id)
-        (.withBootstrapServers bootstrap-servers)
-        (.withProperty ConsumerConfig/AUTO_OFFSET_RESET_CONFIG auto-offset-reset)
-        (.withProperty ConsumerConfig/ENABLE_AUTO_COMMIT_CONFIG enable-auto-commit)
-        (.withPartitionAssignmentStrategyCooperativeStickyAssignor)
-        (.withConnectionChecker (ConnectionCheckerSettings. true 20 (FiniteDuration. 30 TimeUnit/SECONDS) 10.0))
-        (.withProperties ^Map consumer-config))))
+                            (update-keys (fn [key] (-> key name (str/replace #"-" ".")))))
+        consumer-settings (-> (ConsumerSettings/create actor-system ^Deserializer key-deserializer ^Deserializer value-deserializer)
+                              (.withGroupId group-id)
+                              (.withBootstrapServers bootstrap-servers)
+                              (.withProperty ConsumerConfig/AUTO_OFFSET_RESET_CONFIG auto-offset-reset)
+                              (.withProperty ConsumerConfig/ENABLE_AUTO_COMMIT_CONFIG enable-auto-commit)
+                              (.withConnectionChecker (ConnectionCheckerSettings. true 20 (FiniteDuration. 30 TimeUnit/SECONDS) 10.0))
+                              (.withProperties ^Map consumer-config))]
+    (if cooperative-sticky-assignor?
+      (.withPartitionAssignmentStrategyCooperativeStickyAssignor consumer-settings)
+      consumer-settings)))
+
+(defn consumer-settings-from-actor-system-config
+  "Settings for consumers. See akka.kafka.consumer section in reference.conf
+  https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/ConsumerSettings.html
+  - Expects consumer-properties to be supplied with kebab-case-keyword keys
+    Full config list can be found in org.apache.kafka.clients.consumer.ConsumerConfig"
+  ^ConsumerSettings
+  [^ActorSystem actor-system {:keys [consumer-config-key group-id key-deserializer value-deserializer bootstrap-servers cooperative-sticky-assignor?]
+                              :or {cooperative-sticky-assignor? false}}]
+  (let [consumer-config (-> actor-system .settings .config (.getConfig consumer-config-key))
+        consumer-setting (-> (ConsumerSettings/create consumer-config ^Deserializer key-deserializer ^Deserializer value-deserializer)
+                             (.withGroupId group-id)
+                             (.withBootstrapServers bootstrap-servers))]
+    (if cooperative-sticky-assignor?
+      (.withPartitionAssignmentStrategyCooperativeStickyAssignor consumer-setting)
+      consumer-setting)))
 
 (defn ->committable-source
   "The committableSource makes it possible to commit offset positions to Kafka.
@@ -92,7 +111,7 @@
   "The plainSource emits ConsumerRecord elements (as received from the underlying KafkaConsumer). It has no support for committing offsets to Kafka. It can be used when the offset is stored externally or with auto-commit (note that auto-commit is by default disabled)
   https://doc.akka.io/api/alpakka-kafka/4.0.2/akka/kafka/javadsl/Consumer$.html#plainSource[K,V](settings:akka.kafka.ConsumerSettings[K,V],subscription:akka.kafka.Subscription):akka.stream.javadsl.Source[org.apache.kafka.clients.consumer.ConsumerRecord[K,V],akka.kafka.javadsl.Consumer.Control]"
   [^ConsumerSettings consumer-settings topics]
-  (Consumer/plainSource consumer-settings ^Set (set topics)))
+  (Consumer/plainSource consumer-settings (Subscriptions/topics (set topics))))
 
 (def
   ^{:doc "Combine control and a stream completion signal materialized values into one, so that the stream can be stopped in a controlled way without losing commits
@@ -154,6 +173,13 @@
     (key (consumer-record this)))
   (value [this]
     (value (consumer-record this))))
+
+(extend-type ConsumerRecord
+  IConsumerMessage
+  (consumer-record [this]
+    this)
+  (committable-offset [this]
+    (.offset this)))
 
 (extend-type ConsumerMessage$TransactionalMessage
   IConsumerMessage
