@@ -16,7 +16,7 @@
   (-> (consumer/->committable-source consumer-settings consumer-topics)
       (s/map-async 2
                    (fn [message]
-                     (let [_key (consumer/key message)      ;; Don't care as it is null
+                     (let [_key (consumer/key message)
                            value (consumer/value message)
                            committable-offset (consumer/committable-offset message)
                            messages-to-publish (processing-fn producer-topic value)]
