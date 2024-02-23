@@ -50,11 +50,11 @@
 (def committer-settings (committer/committer-settings actor-system {:batch-size 1}))
 
 ;; Create consumer-settings
-(def consumer-settings (consumer/->consumer-settings actor-system
-                                                       {:group-id "a-test-consumer"
-                                                        :bootstrap-servers "localhost:9092"
-                                                        :key-deserializer (StringDeserializer.)
-                                                        :value-deserializer (StringDeserializer.)}))
+(def consumer-settings (consumer/consumer-settings actor-system
+                                                   {:group-id "a-test-consumer"
+                                                    :bootstrap-servers "localhost:9092"
+                                                    :key-deserializer (StringDeserializer.)
+                                                    :value-deserializer (StringDeserializer.)}))
 
 ;; holding on to consumer-control to shutdown streams
 (def consumer-control (test-stream actor-system consumer-settings committer-settings ["testing_stuff"]))
