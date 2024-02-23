@@ -1,4 +1,4 @@
-(ns fr33m0nk.kafka-stream-with-error-handling
+(ns fr33m0nk.kafka-stream-with-error-handling-test
   (:require [clojure.string :as str]
             [clojure.test :refer [deftest testing is]]
             [fr33m0nk.akka.actor :as actor]

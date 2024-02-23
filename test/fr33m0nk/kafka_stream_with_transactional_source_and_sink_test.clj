@@ -1,4 +1,4 @@
-(ns fr33m0nk.kafka-stream-with-transactional-source-and-sink
+(ns fr33m0nk.kafka-stream-with-transactional-source-and-sink-test
   (:require [clojure.string :as str]
             [clojure.test :refer [deftest testing is]]
             [fr33m0nk.akka.actor :as actor]

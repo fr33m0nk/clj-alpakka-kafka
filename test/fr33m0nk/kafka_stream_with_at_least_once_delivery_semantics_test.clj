@@ -1,4 +1,4 @@
-(ns fr33m0nk.kafka-stream-producing-multiple-messages-per-consumed-message
+(ns fr33m0nk.kafka-stream-with-at-least-once-delivery-semantics-test
   (:require [clojure.string :as str]
             [clojure.test :refer [deftest testing is]]
             [fr33m0nk.akka.actor :as actor]
@@ -11,7 +11,7 @@
   (:import (java.util.concurrent CompletableFuture)
            (org.apache.kafka.common.serialization StringSerializer StringDeserializer)))
 
-(defn kafka-stream-producing-multiple-messages-per-consumed-message
+(defn kafka-stream-producing-multiple-messages-with-at-least-once-semantics
   [actor-system consumer-settings committer-settings producer-settings consumer-topics producer-topic processing-fn]
   (-> (consumer/->committable-source consumer-settings consumer-topics)
       (s/map-async 2
@@ -21,11 +21,13 @@
                            committable-offset (consumer/committable-offset message)
                            messages-to-publish (processing-fn producer-topic value)]
                        (producer/multi-producer-message-envelope committable-offset messages-to-publish))))
-      (s/to-mat (producer/committable-sink producer-settings committer-settings) consumer/create-draining-control)
+      (s/via (producer/flexi-flow producer-settings))
+      (s/map producer/producer-message-passthrough)
+      (s/to-mat (committer/sink committer-settings) consumer/create-draining-control)
       (s/run actor-system)))
 
-(deftest kafka-stream-with-producer-test
-  (testing "kafka stream producing multiple messages per consumed message test"
+(deftest kafka-stream-producing-multiple-messages-with-at-least-once-semantics-test
+  (testing "kafka stream producing multiple messages with at least once semantics test"
     (tu/with-kafka-test-container
       in-topic out-topic bootstrap-servers
       (let [actor-system (actor/->actor-system "test-actor-system")
@@ -42,13 +44,13 @@
                                                                                     :value-serializer (StringSerializer.)
                                                                                     :bootstrap-servers bootstrap-servers})
             processing-fn (fn [producer-topic message]
-                            (->> (repeat 5 message)
+                            (->> (repeat 3 message)
                                  (mapv #(producer/->producer-record producer-topic (str/upper-case %)))))
-            consumer-control (kafka-stream-producing-multiple-messages-per-consumed-message
+            consumer-control (kafka-stream-producing-multiple-messages-with-at-least-once-semantics
                                actor-system consumer-settings committer-settings producer-settings [in-topic] out-topic processing-fn)
             in-messages [{:key "key-1" :value "msg-1"} {:key "key-2" :value "msg-2"} {:key "key-3" :value "msg-3"}]
             expected-out (->> [{:key nil :value "MSG-1"} {:key nil :value "MSG-2"} {:key nil :value "MSG-3"}]
-                              (into [] (comp (map #(repeat 5 %)) cat)))]
+                              (into [] (comp (map #(repeat 3 %)) cat)))]
         (try
           (Thread/sleep 1000)
           (run! (fn [{:keys [key value]}] (tu/send-record bootstrap-servers in-topic key value)) in-messages)
