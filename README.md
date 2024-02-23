@@ -30,12 +30,12 @@ For further documentation, do refer [Alpakka Kafka official docs](https://doc.ak
 
 - **CLI/deps.edn dependency information**
 ```clojure
-net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.7"}
+net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.8"}
 ```
 
 - **Leningen/Boot**
 ```clojure
-[net.clojars.fr33m0nk/clj-alpakka-kafka "0.1.7"]
+[net.clojars.fr33m0nk/clj-alpakka-kafka "0.1.8"]
 ```
 
 - **Maven**
@@ -43,19 +43,19 @@ net.clojars.fr33m0nk/clj-alpakka-kafka {:mvn/version "0.1.7"}
 <dependency>
   <groupId>net.clojars.fr33m0nk</groupId>
   <artifactId>clj-alpakka-kafka</artifactId>
-  <version>0.1.7</version>
+  <version>0.1.8</version>
 </dependency>
 ```
 
 - **Gradle**
 ```groovy
-implementation("net.clojars.fr33m0nk:clj-alpakka-kafka:0.1.7")
+implementation("net.clojars.fr33m0nk:clj-alpakka-kafka:0.1.8")
 ```
 
 ### Additional dependencies:
 - Kafka Client ([any compatible version is fine](https://doc.akka.io/docs/alpakka-kafka/current/home.html))
 ```clojure
-org.apache.kafka/kafka-clients {:mvn/version "3.3.2"} 
+org.apache.kafka/kafka-clients {:mvn/version "3.6.1"} 
 ```
 - SLF4J implentation based logger 
   - Needed for Akka logging

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.clojars.fr33m0nk</groupId>
     <artifactId>clj-alpakka-kafka</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <name>clj-alpakka-kafka</name>
     <description>Clojure wrapper for Alpakka Kafka.</description>
     <url>https://github.com/fr33m0nk/clj-alpakka-kafka</url>
@@ -22,14 +22,9 @@
         <url>https://github.com/fr33m0nk/clj-alpakka-kafka</url>
         <connection>scm:git:git://github.com/fr33m0nk/clj-alpakka-kafka.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/fr33m0nk/clj-alpakka-kafka.git</developerConnection>
-        <tag>v0.1.7</tag>
+        <tag>v0.1.8</tag>
     </scm>
     <dependencies>
-        <dependency>
-            <groupId>org.clojure</groupId>
-            <artifactId>clojure</artifactId>
-            <version>1.10.3</version>
-        </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
