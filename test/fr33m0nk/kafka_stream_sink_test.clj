@@ -5,7 +5,7 @@
             [fr33m0nk.alpakka-kafka.committer :as committer]
             [fr33m0nk.alpakka-kafka.consumer :as consumer]
             [fr33m0nk.utils :as utils]
-            [fr33m0nk.test-utils :as ftu])
+            [fr33m0nk.test-utils :as tu])
   (:import (java.util.concurrent CompletableFuture)
            (org.apache.kafka.common.serialization StringDeserializer)))
 
@@ -26,14 +26,16 @@
 
 (deftest kafka-stream-sink-only-test
   (testing "kafka stream sink test"
-    (ftu/with-kafka-test-container in-topic out-topic bootstrap-servers
+    (tu/with-kafka-test-container
+      in-topic out-topic bootstrap-servers
       (let [actor-system (actor/->actor-system "test-actor-system")
             committer-settings (committer/committer-settings actor-system {:batch-size 2})
-            consumer-settings (consumer/consumer-settings actor-system
-                                                          {:group-id "alpakka-consumer"
-                                                           :bootstrap-servers bootstrap-servers
-                                                           :key-deserializer (StringDeserializer.)
-                                                           :value-deserializer (StringDeserializer.)})
+            consumer-settings (consumer/consumer-settings-from-actor-system-config actor-system
+                                                                                   {:consumer-config-key "akka.kafka.consumer"
+                                                                                    :group-id "alpakka-consumer-group-1"
+                                                                                    :key-deserializer (StringDeserializer.)
+                                                                                    :value-deserializer (StringDeserializer.)
+                                                                                    :bootstrap-servers bootstrap-servers})
             actual-messages (atom [])
             processing-fn (fn [message]
                             (let [key (consumer/key message)
@@ -44,7 +46,7 @@
             expected [{:key "key-1" :value "msg-1"} {:key "key-2" :value "msg-2"} {:key "key-3" :value "msg-3"}]]
         (try
           (Thread/sleep 1000)
-          (run! (fn [{:keys [key value]}] (ftu/send-record bootstrap-servers in-topic key value)) expected)
+          (run! (fn [{:keys [key value]}] (tu/send-record bootstrap-servers in-topic key value)) expected)
           (Thread/sleep 1000)
           (is (= expected @actual-messages))
           (finally

@@ -7,7 +7,7 @@
             [fr33m0nk.alpakka-kafka.consumer :as consumer]
             [fr33m0nk.alpakka-kafka.producer :as producer]
             [fr33m0nk.utils :as utils]
-            [fr33m0nk.test-utils :as ftu])
+            [fr33m0nk.test-utils :as tu])
   (:import (java.util.concurrent CompletableFuture)
            (org.apache.kafka.common.serialization StringSerializer StringDeserializer)))
 
@@ -28,17 +28,21 @@
 
 (deftest kafka-stream-producing-multiple-messages-with-at-least-once-semantics-test
   (testing "kafka stream producing multiple messages with at least once semantics test"
-    (ftu/with-kafka-test-container in-topic out-topic bootstrap-servers
+    (tu/with-kafka-test-container
+      in-topic out-topic bootstrap-servers
       (let [actor-system (actor/->actor-system "test-actor-system")
             committer-settings (committer/committer-settings actor-system {:batch-size 2})
-            consumer-settings (consumer/consumer-settings actor-system
-                                                          {:group-id "alpakka-consumer"
-                                                           :bootstrap-servers bootstrap-servers
-                                                           :key-deserializer (StringDeserializer.)
-                                                           :value-deserializer (StringDeserializer.)})
-            producer-settings (producer/producer-settings actor-system {:bootstrap-servers bootstrap-servers
-                                                                        :key-serializer (StringSerializer.)
-                                                                        :value-serializer (StringSerializer.)})
+            consumer-settings (consumer/consumer-settings-from-actor-system-config actor-system
+                                                                                   {:consumer-config-key "akka.kafka.consumer"
+                                                                                    :group-id "alpakka-consumer-group-1"
+                                                                                    :key-deserializer (StringDeserializer.)
+                                                                                    :value-deserializer (StringDeserializer.)
+                                                                                    :bootstrap-servers bootstrap-servers})
+            producer-settings (producer/producer-settings-from-actor-system-config actor-system
+                                                                                   {:producer-config-key "akka.kafka.producer"
+                                                                                    :key-serializer (StringSerializer.)
+                                                                                    :value-serializer (StringSerializer.)
+                                                                                    :bootstrap-servers bootstrap-servers})
             processing-fn (fn [producer-topic message]
                             (->> (repeat 3 message)
                                  (mapv #(producer/->producer-record producer-topic (str/upper-case %)))))
@@ -49,10 +53,10 @@
                               (into [] (comp (map #(repeat 3 %)) cat)))]
         (try
           (Thread/sleep 1000)
-          (run! (fn [{:keys [key value]}] (ftu/send-record bootstrap-servers in-topic key value)) in-messages)
+          (run! (fn [{:keys [key value]}] (tu/send-record bootstrap-servers in-topic key value)) in-messages)
           (Thread/sleep 1000)
 
-          (is (= expected-out (ftu/read-records bootstrap-servers out-topic 1000)))
+          (is (= expected-out (tu/read-records bootstrap-servers out-topic 1000)))
 
           (finally
             @(consumer/drain-and-shutdown consumer-control
