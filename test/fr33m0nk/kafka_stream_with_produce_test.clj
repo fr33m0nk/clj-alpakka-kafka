@@ -28,7 +28,7 @@
   (testing "kafka stream with producer test"
     (ftu/with-kafka-test-container in-topic out-topic bootstrap-servers
       (let [actor-system (actor/->actor-system "test-actor-system")
-            committer-settings (committer/committer-settings actor-system {:batch-size 1})
+            committer-settings (committer/committer-settings actor-system {:batch-size 2})
             consumer-settings (consumer/consumer-settings actor-system
                                                           {:group-id "alpakka-consumer"
                                                            :bootstrap-servers bootstrap-servers
