@@ -5,8 +5,6 @@
   (:import (java.time Duration)
            (org.apache.kafka.clients.admin AdminClient AdminClientConfig KafkaAdminClient NewTopic)
            (org.apache.kafka.clients.consumer ConsumerConfig ConsumerRecord KafkaConsumer)
-           (org.apache.kafka.common.internals Topic)
-           (org.apache.kafka.common.serialization StringSerializer StringDeserializer)
            (org.apache.kafka.clients.producer KafkaProducer ProducerRecord ProducerConfig)
            (org.testcontainers.containers KafkaContainer)
            (org.testcontainers.utility DockerImageName)))
